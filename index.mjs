@@ -68,9 +68,8 @@ Bot.on("message", message => {
       channel.send(c(author, oneof(2, 5)));
    }
    if (["d", "j", "dad", "joke", "dadjoke"].includes(content)){
-       fetch("https://icanhazdadjoke.com/", {accept:"application/json"})
-       .then(r => r.json())
-       .then((r)=>channel.send(r["joke"]));
+       fetch("https://icanhazdadjoke.com/", {accept:"text/plain"})
+       .then((r)=>channel.send(r.text()));
    }
 
 });
