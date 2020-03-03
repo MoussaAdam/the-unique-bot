@@ -69,7 +69,7 @@ Bot.on("message", message => {
    }
    if (["d", "j", "dad", "joke", "dadjoke"].includes(content)){
        fetch("https://icanhazdadjoke.com/", {accept:"text/plain"})
-       .then(r=>r.text());
+       .then(r=>r.text())
        .then(r=>channel.send(r));
    }
 
