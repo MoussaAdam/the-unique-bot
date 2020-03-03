@@ -20,13 +20,12 @@
   "dependencies": {
     "discord.js": "^11.5.1",
     "knope": "^1.1.2",
+    "node-fetch": "^2.6.0",
     "randomcolor": "^0.5.4",
     "request": "2.81.0"
   },
   "engines": {
     "node": "13.7.x"
   },
-  "devDependencies": {
-    "node-fetch": "^2.6.0"
-  }
+  "devDependencies": {}
 }
