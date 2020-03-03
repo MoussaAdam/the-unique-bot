@@ -2,6 +2,7 @@ import { log } from "console";
 
 import Discord from "discord.js";
 import knope from "knope";
+import fetch from "node-fetch";
 import * as temp from "./templates.mjs";
 
 const { Client, TextChannel } = Discord;
@@ -65,6 +66,11 @@ Bot.on("message", message => {
    if (["comp", "c"].includes(content)) {
       const c = oneof([comp, compall, compoff]);
       channel.send(c(author, oneof(2, 5)));
+   }
+   if (["d", "j", "dad", "joke", "dadjoke"].includes(content)){
+       fetch("https://icanhazdadjoke.com/", {accept:"application/json"})
+       .then(r => r.json())
+       .then((r)=>channel.send(r["joke"]));
    }
 
 });
