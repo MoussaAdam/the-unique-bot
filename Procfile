@@ -1,1 +1,1 @@
-worker: node index.mjs
+worker: npm run-script startup

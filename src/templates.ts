@@ -1,5 +1,7 @@
-import rcolor from "randomcolor";
-export function welcome(guild, rules, user) {
+import palette from './palette'
+import { oneof } from "./utils";
+export function welcome(guild, rules, memeber) {
+    const { user } = memeber;
     const admins = guild.roles.find(role => /admin(istrator)?s?|mod(erator)?s?/i.test(role.name)).members;
     return {
         embed: {
@@ -31,7 +33,7 @@ export function welcome(guild, rules, user) {
 export function confession(message) {
     return {
         embed: {
-            color: parseInt(rcolor().slice(1), 16),
+            color: oneof(palette),
             author: {
                 name: 'Anonymous',
                 icon_url: 'https://img.icons8.com/cotton/2x/gender-neutral-user--v1.png'

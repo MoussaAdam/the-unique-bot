@@ -2,10 +2,11 @@
   "name": "the-unique-bot",
   "version": "1.0.0",
   "description": "adam's bot!",
-  "main": "index.js",
-  "type": "module",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node bot.js"
+    "build":"npx tsc",
+    "start": "node dist/index.js",
+    "startup": "npm run-script build && npm run-script start"
   },
   "repository": {
     "type": "git",
@@ -18,14 +19,16 @@
   },
   "homepage": "https://github.com/MoussaAdam/the-unique-bot#readme",
   "dependencies": {
-    "discord.js": "^11.5.1",
+    "discord.js": "^11.6.1",
     "knope": "^1.1.2",
     "node-fetch": "^2.6.0",
-    "randomcolor": "^0.5.4",
-    "request": "2.81.0"
+    "randomcolor": "^0.5.4"
   },
   "engines": {
     "node": "13.7.x"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/node": "^13.9.0",
+    "@types/node-fetch": "^2.5.5"
+  }
 }
