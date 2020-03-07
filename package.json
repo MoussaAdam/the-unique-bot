@@ -1,7 +1,7 @@
 {
   "name": "the-unique-bot",
   "version": "1.0.0",
-  "description": "adam's bot!",
+  "description": "a discord bot!",
   "main": "dist/index.js",
   "scripts": {
     "build": "npx tsc",
