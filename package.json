@@ -24,9 +24,7 @@
     "node-fetch": "^2.6.0",
     "randomcolor": "^0.5.4"
   },
-  "engines": {
-    "node": "13.7.x"
-  },
+  "engines": {},
   "devDependencies": {
     "@types/node": "^13.9.0",
     "@types/node-fetch": "^2.5.5"
