@@ -64,7 +64,7 @@ Bot.on("message", message => {
 
   // if it's a command lets handle it
   if (content[0] == ";") {
-    content = content.slice(1).toLowerCase();
+    content = content.slice(1).trim().toLowerCase();
     command(content.split(/\s+/), message);
   }
 });
