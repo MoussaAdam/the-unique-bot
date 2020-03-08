@@ -11,22 +11,23 @@ Bot.once("ready", () => log("ok i have just logged in! :)"));
 
 const cache: Collection<string, Collection<string, TextChannel>> = new Collection();
 
-// Welcoming
+// Welcoming New Members
 Bot.on("guildMemberAdd", member => {
   const { guild } = member;
   const { id: GID } = guild;
 
-  // Check/SetUp Cache
+  // Get/Set the Cache for the server
   if (!cache.has(GID)) cache.set(GID, new Collection());
 
-  // find a welcome channel
+  // Get/Set neeeded Channels Cache
+  // look for a welcome channel
   if (!cache.get(GID).has('welcome')) {
     const rxp = /(welcome|start)[ \-]*(page|channel)?/i;
     const channel = guild.channels.find(channel => rxp.test(channel.name))
     cache.get(GID).set('welcome', new TextChannel(guild, channel));
   }
 
-  // find the rules channel
+  // look for a rules channel
   if (!cache.get(GID).has('rules')) {
     const channel = guild.channels.find(channel => channel.name.includes("rule"));
     cache.get(GID).set('rules', new TextChannel(guild, channel));
@@ -34,26 +35,31 @@ Bot.on("guildMemberAdd", member => {
 
   // check the existance of the channels
   const welcome = cache.get(GID).get('welcome');
-  const rules = cache.get(GID).get('welcome');
+  const rules = cache.get(GID).get('rules');
   if (!welcome) {
     log("couldn't find a welcome channel, imma go outta here ~ bye");
     return;
   }
 
   // send the welcome message
+  import('./templates');
   welcome.send(templates.welcome(guild, rules, member));
 });
 
-// Handle commands
+// Handle commands and messages
 Bot.on("message", message => {
-  const { channel } = message;
+  //i dont answer bots :/
+  const { author } = message;
+  if (author.bot) return;
 
-  // i dont like Dm :/
+  // nor Direct Messages :/
+  const { channel } = message;
   if (channel.type == "dm") {
     message.author.send("sorry i can't handle Direct Messages :sweat_smile:");
     return;
   }
 
+  // ignore spaces
   let { content } = message;
   content = content.trim();
 
@@ -62,23 +68,25 @@ Bot.on("message", message => {
     message.channel.send(content.replace('i','o').replace('I', 'O'));
   }
 
+  // confession management
+  // look for a confession channel
+  const { guild } = message;
+  const { id:GID } = guild;
+  if (!cache.get(GID).has('rules')) {
+    const channel = guild.channels.find(({ name }) => name.includes("confess"));
+    cache.get(GID).set('confess', new TextChannel(guild, channel));
+  }
+
+  // do we hve a confession channel, and is this message posted in it 
+  const confess = cache.get(GID).get('confess');
+  if (confess && channel.id == confess.id) {
+    message.delete();
+    confess.send(templates.confession(message.content));
+  }
+
   // if it's a command lets handle it
   if (content[0] == ";") {
     content = content.slice(1).trim().toLowerCase();
     command(content.split(/\s+/), message);
   }
-});
-
-// Confessions
-Bot.on("message", message => {
-  const { author } = message;
-  if (author.bot) return;
-  const { guild, channel } = message;
-  const { channels } = guild;
-  const gConfess = channels.find(({ name }) => name.includes("confess"));
-  if (!gConfess) return;
-  if (channel.id !== gConfess.id) return;
-  message.delete();
-  const cConfess = new TextChannel(guild, gConfess);
-  cConfess.send(templates.confession(message.content));
 });

@@ -1,8 +1,9 @@
 {
     "compilerOptions": {
-        "rootDir": "src/",
+        "module": "CommonJS",
+        "target": "ESNext",
+        "lib": ["ESNext"],
         "outDir": "dist/",
-        "sourceMap": false
     },
     "exclude": [
         "node_modules",

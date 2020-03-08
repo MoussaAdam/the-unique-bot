@@ -6,7 +6,6 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node .",
-
     "postinstall": "npm run build"
   },
   "repository": {
@@ -22,8 +21,7 @@
   "dependencies": {
     "discord.js": "^11.6.1",
     "knope": "^1.1.2",
-    "node-fetch": "^2.6.0",
-    "randomcolor": "^0.5.4"
+    "node-fetch": "^2.6.0"
   },
   "engines": {},
   "devDependencies": {
