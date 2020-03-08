@@ -71,7 +71,8 @@ Bot.on("message", message => {
   // confession management
   // look for a confession channel
   const { guild } = message;
-  const { id:GID } = guild;
+  const { id: GID } = guild;
+  if (!cache.has(GID)) cache.set(GID, new Collection());
   if (!cache.get(GID).has('rules')) {
     const channel = guild.channels.find(({ name }) => name.includes("confess"));
     cache.get(GID).set('confess', new TextChannel(guild, channel));
