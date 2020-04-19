@@ -1,93 +1,76 @@
 import command from "./command";
-import { Client, TextChannel, Collection } from "discord.js";
+import { Client } from "discord.js";
 import * as templates from "./templates";
+import cache from "./cache";
+
+// Bot id 679986715229814794
+// Owner id 540563047824228352
+// Bot invite https://discordapp.com/oauth2/authorize/?permissions=401735275&scope=bot&client_id=679986715229814794
+// Bot invite https://discordapp.com/oauth2/authorize/?client_id=679986715229814794&scope=bot&permissions=334626175
 
 const Bot = new Client();
 const { log } = console;
 
-// Log in
-Bot.login(process.env.SECRET);
-Bot.once("ready", () => log("ok i have just logged in! :)"));
+Bot.once("ready", () => {
+  log(`ok i have just logged in!, i am ${Bot.user.tag} <${Bot.user.id}>`);
+  setTimeout(() => {
+    Bot.user.setActivity('Looking after "Sweet Home" and some other servers');
+  }, 1000 * 30);
+});
 
-const cache: Collection<string, Collection<string, TextChannel>> = new Collection();
-
-// Welcoming New Members
-Bot.on("guildMemberAdd", member => {
-  const { guild } = member;
-  const { id: GID } = guild;
-
-  // Get/Set the Cache for the server
-  if (!cache.has(GID)) cache.set(GID, new Collection());
-
-  // Get/Set neeeded Channels Cache
-  // look for a welcome channel
-  if (!cache.get(GID).has('welcome')) {
-    const rxp = /(welcome|start)[ \-]*(page|channel)?/i;
-    const channel = guild.channels.find(channel => rxp.test(channel.name))
-    cache.get(GID).set('welcome', new TextChannel(guild, channel));
-  }
-
-  // look for a rules channel
-  if (!cache.get(GID).has('rules')) {
-    const channel = guild.channels.find(channel => channel.name.includes("rule"));
-    cache.get(GID).set('rules', new TextChannel(guild, channel));
-  }
-
-  // check the existance of the channels
-  const welcome = cache.get(GID).get('welcome');
-  const rules = cache.get(GID).get('rules');
-  if (!welcome) {
-    log("couldn't find a welcome channel, imma go outta here ~ bye");
-    return;
-  }
-
-  // send the welcome message
-  import('./templates');
-  welcome.send(templates.welcome(guild, rules, member));
+// Welcome New Members
+Bot.on("guildMemberAdd", (member) => {
+  const guild = cache(member.guild);
+  guild.ifhas('welcome', (channel) => {
+    channel.sendEmbed(templates.welcome(member));
+    guild.get('rules', (rules) => {
+      channel.sendEmbed(templates.rules(rules))
+    });
+  });
 });
 
 // Handle commands and messages
-Bot.on("message", message => {
-  //i dont answer bots :/
+Bot.on("message", (message) => {
   const { author } = message;
+
+  //   //i dont reply bots, including myself :/
   if (author.bot) return;
 
-  // nor Direct Messages :/
+  // sorry no Direct Messages :/
   const { channel } = message;
   if (channel.type == "dm") {
-    message.author.send("sorry i can't handle Direct Messages :sweat_smile:");
+    message.author.send("sorry i dont answer Direct Messages :sweat_smile:.. yet...");
     return;
   }
 
-  // ignore spaces
+  // remove spaces
   let { content } = message;
   content = content.trim();
 
   // pinging
   if (content.toLowerCase() === "ping") {
-    message.channel.send(content.replace('i','o').replace('I', 'O'));
-  }
-
-  // confession management
-  // look for a confession channel
-  const { guild } = message;
-  const { id: GID } = guild;
-  if (!cache.has(GID)) cache.set(GID, new Collection());
-  if (!cache.get(GID).has('rules')) {
-    const channel = guild.channels.find(({ name }) => name.includes("confess"));
-    cache.get(GID).set('confess', new TextChannel(guild, channel));
-  }
-
-  // do we hve a confession channel, and is this message posted in it 
-  const confess = cache.get(GID).get('confess');
-  if (confess && channel.id == confess.id) {
-    message.delete();
-    confess.send(templates.confession(message.content));
+    message.channel.send(content.replace("i", "o").replace("I", "O"));
   }
 
   // if it's a command lets handle it
   if (content[0] == ";") {
     content = content.slice(1).trim().toLowerCase();
     command(content.split(/\s+/), message);
+    return;
   }
+
+  // confession management
+  // look for a confession channel
+  cache(message.guild).ifhas('confess', channel => {
+    if (message.channel.id !== channel.id) return;
+    message.delete();
+    channel.sendEmbed(templates.confession(message));
+  });
+
 });
+
+// Log in
+if (!("DISCORD_UNIQUE_TOKEN" in process.env)) {
+  throw new Error("No Client Token Specified");
+}
+Bot.login(process.env.DISCORD_UNIQUE_TOKEN);

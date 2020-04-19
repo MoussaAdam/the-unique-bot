@@ -1,4 +1,5 @@
 import { oneof, random } from "./utils";
+import cache from "./cache";
 import {
     getCompliment,
     getComplimentWithAlliteration,
@@ -6,8 +7,11 @@ import {
 } from "knope";
 
 import fetch from "node-fetch";
-export default function command(commands: Array<string>, { channel, author }) {
-    switch (commands[0]) {
+import { Message } from "discord.js";
+
+export default function command(args: Array<string>, msg:Message) {
+    const { channel, member, guild } = msg;
+    switch (args[0]) {
         case 'compliment': case 'comp': case 'c':
             const c = oneof([
                 getCompliment,
@@ -15,16 +19,20 @@ export default function command(commands: Array<string>, { channel, author }) {
                 getOfficialCompliment
             ]);
             const length = random(20) == 10 ? random(12, 26) : random(1, 5);
-            channel.send(c(commands[1] || author, length));
+            channel.send(c(args[1] || member, length));
             break;
         case "joke":
             fetch("https://icanhazdadjoke.com/", { headers: { accept: "text/plain" } })
                 .then(r => r.text())
                 .then(r => channel.send(r));
             break;
+        case 'auto':
+            cache(guild).autoFill(msg);
+            break;
         case "purge":
-            if (author.hasPermission('MANAGE_MESSAGES')) {
-                const n = parseFloat(commands[1]);
+            console.log(member.hasPermission('MANAGE_MESSAGES'))
+            if (member.hasPermission('MANAGE_MESSAGES')) {
+                const n = parseFloat(args[1]);
                 channel.bulkDelete(n);
             }
             break;

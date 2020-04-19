@@ -20,6 +20,7 @@
   "homepage": "https://github.com/MoussaAdam/the-unique-bot#readme",
   "dependencies": {
     "discord.js": "^11.6.1",
+    "discord.js-commando": "^0.10.0",
     "knope": "^1.1.2",
     "node-fetch": "^2.6.0"
   },
