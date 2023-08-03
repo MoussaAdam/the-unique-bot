@@ -22,7 +22,7 @@
     "discord.js": "^11.6.1",
     "discord.js-commando": "^0.10.0",
     "knope": "^1.1.2",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.7"
   },
   "engines": {},
   "devDependencies": {
